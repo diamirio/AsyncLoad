@@ -195,7 +195,3 @@ struct UserProfileView: View {
 3. **Always handle all states** in your UI to provide good user experience
 4. **Use AsyncLoadView** for simple cases to reduce boilerplate code
 5. **Reset states** appropriately (e.g., set to `.none` when appropriate)
-
-## License
-
-[Your License Here]
