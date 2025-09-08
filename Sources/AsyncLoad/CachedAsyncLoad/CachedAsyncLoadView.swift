@@ -53,7 +53,7 @@ fileprivate enum CustomError: Error {
     case test
 }
 
-@available(iOS 17.0, *)
+@available(iOS 17.0, macOS 14.0, watchOS 10.0, *)
 #Preview {
     @State
     @Previewable
