@@ -1,21 +1,6 @@
 import Foundation
 
 public enum AsyncAction<T>: Equatable {
-    public static func == (lhs: AsyncAction<T>, rhs: AsyncAction<T>) -> Bool {
-        switch (lhs, rhs) {
-        case (.none, .none):
-            true
-        case (.loading, .loading):
-            true
-        case (.error, .error):
-            true
-        case (.success, .success):
-            true
-        default:
-            false
-        }
-    }
-
     case none
     case loading
     case error(Error)
@@ -43,6 +28,21 @@ public enum AsyncAction<T>: Equatable {
             error
         default:
             nil
+        }
+    }
+    
+    public static func == (lhs: AsyncAction<T>, rhs: AsyncAction<T>) -> Bool {
+        switch (lhs, rhs) {
+        case (.none, .none):
+            true
+        case (.loading, .loading):
+            true
+        case (.error, .error):
+            true
+        case (.success, .success):
+            true
+        default:
+            false
         }
     }
 }
