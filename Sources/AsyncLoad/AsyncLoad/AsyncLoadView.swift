@@ -6,14 +6,14 @@ public struct AsyncLoadView<Item, Content: View, ErrorContent: View>: View {
     let state: AsyncLoad<Item>
 
     @ViewBuilder
-    let content: (Item?) -> Content
+    let content: (Item) -> Content
 
     @ViewBuilder
     let errorContent: (Error) -> ErrorContent
 
     public init(
         _ state: AsyncLoad<Item>,
-        @ViewBuilder content: @escaping (Item?) -> Content,
+        @ViewBuilder content: @escaping (Item) -> Content,
         @ViewBuilder error: @escaping (Error) -> ErrorContent
     ) {
         self.state = state
@@ -33,8 +33,10 @@ public struct AsyncLoadView<Item, Content: View, ErrorContent: View>: View {
 
     public var body: some View {
         ZStack {
-            content(state.item)
-                .opacity(state.item != nil ? 1 : 0)
+            if let item = state.item {
+                content(item)
+                    .opacity(state.item != nil ? 1 : 0)
+            }
 
             switch state {
             case .loading, .none:
