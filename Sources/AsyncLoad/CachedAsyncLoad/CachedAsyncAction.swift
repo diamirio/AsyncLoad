@@ -45,4 +45,19 @@ public enum CachedAsyncAction<T>: Equatable {
             false
         }
     }
+    
+    public static func == (lhs: CachedAsyncAction<T>, rhs: CachedAsyncAction<T>) -> Bool where T : Equatable {
+        switch (lhs, rhs) {
+        case (.none, .none):
+            true
+        case (.loading, .loading):
+            lhs.item == rhs.item
+        case (.error, .error):
+            true
+        case (.success, .success):
+            lhs.item == rhs.item
+        default:
+            false
+        }
+    }
 }
