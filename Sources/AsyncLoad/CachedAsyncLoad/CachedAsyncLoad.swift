@@ -1,6 +1,6 @@
 import Foundation
 
-public enum CachedAsyncLoad<T>: Equatable {
+public enum CachedAsyncLoad<T: Sendable>: Equatable, Sendable {
     case none
     case loading(T? = nil)
     case error(T? = nil, Error)
@@ -41,6 +41,36 @@ public enum CachedAsyncLoad<T>: Equatable {
             true
         case (.loaded, .loaded):
             true
+        default:
+            false
+        }
+    }
+    
+    public static func == (lhs: CachedAsyncLoad<T>, rhs: CachedAsyncLoad<T>) -> Bool where T : Equatable {
+        switch (lhs, rhs) {
+        case (.none, .none):
+            true
+        case let (.loading(lhsItem), .loading(rhsItem)):
+            lhsItem == rhsItem
+        case let (.error(lhsItem, _), .error(rhsItem, _)):
+            lhsItem == rhsItem
+        case let (.loaded( lhsItem), .loaded(rhsItem)):
+            lhsItem == rhsItem
+        default:
+            false
+        }
+    }
+    
+    public static func != (lhs: CachedAsyncLoad<T>, rhs: CachedAsyncLoad<T>) -> Bool where T : Equatable {
+        switch (lhs, rhs) {
+        case (.none, .none):
+            true
+        case let (.loading(lhsItem), .loading(rhsItem)):
+            lhsItem != rhsItem
+        case let (.error(lhsItem, _), .error(rhsItem, _)):
+            lhsItem != rhsItem
+        case let (.loaded( lhsItem), .loaded(rhsItem)):
+            lhsItem != rhsItem
         default:
             false
         }

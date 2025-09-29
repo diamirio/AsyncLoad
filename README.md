@@ -4,10 +4,13 @@ A Swift package that provides elegant state management for asynchronous operatio
 
 ## Overview
 
-AsyncLoad provides two main components for handling asynchronous operations:
+AsyncLoad provides components for handling asynchronous operations:
 - `AsyncLoad<T>`: For loading data operations
-- `AsyncAction<T>`: For action-based operations  
+- `AsyncAction<T>`: For action-based operations
+- `CachedAsyncLoad<T>`: For loading operations that preserve cached data during refreshes
+- `CachedAsyncAction<T>`: For actions that preserve cached data during retries
 - `AsyncLoadView`: A SwiftUI view component for displaying async states
+- `CachedAsyncLoadView`: A SwiftUI view component for cached async states
 
 ## Requirements
 
@@ -25,7 +28,7 @@ Add AsyncLoad to your project by adding the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/yourusername/AsyncLoad", from: "1.0.0")
+    .package(url: "https://github.com/diamirio/AsyncLoad", from: "1.0.0")
 ]
 ```
 
@@ -118,6 +121,101 @@ class FormViewModel {
 }
 ```
 
+### CachedAsyncLoad<T>
+
+An enhanced version of AsyncLoad that preserves cached data during loading and error states.
+
+```swift
+public enum CachedAsyncLoad<T>: Equatable {
+    case none                    // Initial state
+    case loading(T? = nil)       // Loading with optional cached data
+    case error(T? = nil, Error)  // Error with optional cached data
+    case loaded(T)               // Successfully loaded with data
+}
+```
+
+#### Properties
+
+- `isLoading: Bool` - Returns true if the state is `.loading`
+- `item: T?` - Returns the loaded item if state is `.loaded`, nil otherwise
+- `error: Error?` - Returns the error if state is `.error`, nil otherwise
+
+#### Example Usage
+
+```swift
+import AsyncLoad
+
+@Observable
+class CachedDataViewModel {
+    var userProfile: CachedAsyncLoad<User> = .none
+
+    func loadUserProfile(id: String) async {
+        // Start loading while preserving any existing data
+        if case .loaded(let existingUser) = userProfile {
+            userProfile = .loading(existingUser)
+        } else {
+            userProfile = .loading()
+        }
+
+        do {
+            let user = try await userService.fetchUser(id: id)
+            userProfile = .loaded(user)
+        } catch {
+            // Preserve existing data even during error
+            let existingUser = userProfile.item
+            userProfile = .error(existingUser, error)
+        }
+    }
+}
+```
+
+### CachedAsyncAction<T>
+
+Similar to AsyncAction but preserves cached data during loading and error states.
+
+```swift
+public enum CachedAsyncAction<T>: Equatable {
+    case none                    // Initial state
+    case loading(T? = nil)       // Action in progress with optional cached data
+    case error(T? = nil, Error)  // Action failed with optional cached data
+    case success(T)              // Action completed successfully
+}
+```
+
+#### Properties
+
+- `isLoading: Bool` - Returns true if the state is `.loading`
+- `item: T?` - Returns the success result if state is `.success`, nil otherwise
+- `error: Error?` - Returns the error if state is `.error`, nil otherwise
+
+#### Example Usage
+
+```swift
+import AsyncLoad
+
+@Observable
+class CachedFormViewModel {
+    var submitAction: CachedAsyncAction<SubmitResponse> = .none
+
+    func submitForm(data: FormData) async {
+        // Preserve previous successful response during retry
+        if case .success(let previousResponse) = submitAction {
+            submitAction = .loading(previousResponse)
+        } else {
+            submitAction = .loading()
+        }
+
+        do {
+            let response = try await apiService.submit(data)
+            submitAction = .success(response)
+        } catch {
+            let previousResponse = submitAction.item
+            submitAction = .error(previousResponse, error)
+        }
+    }
+}
+```
+
 ### AsyncLoadView
 
 A SwiftUI view component that automatically handles the display of different async states.
@@ -182,16 +280,19 @@ struct UserProfileView: View {
 ## Features
 
 - **Type-safe**: Generic enums ensure type safety for your data
-- **Equatable**: Both AsyncLoad and AsyncAction conform to Equatable for easy state comparison
-- **SwiftUI Integration**: AsyncLoadView provides seamless integration with SwiftUI
+- **Equatable**: All async state enums conform to Equatable for easy state comparison
+- **SwiftUI Integration**: AsyncLoadView and CachedAsyncLoadView provide seamless integration with SwiftUI
 - **Error Handling**: Built-in error state management
 - **Loading States**: Automatic loading state handling with progress indicators
+- **Cached Data**: CachedAsyncLoad and CachedAsyncAction preserve data during refreshes and errors
 - **Flexible UI**: Customizable content and error views
 
 ## Best Practices
 
 1. **Use AsyncLoad for data fetching** operations (GET requests, loading content)
 2. **Use AsyncAction for user actions** (POST/PUT/DELETE requests, form submissions)
-3. **Always handle all states** in your UI to provide good user experience
-4. **Use AsyncLoadView** for simple cases to reduce boilerplate code
-5. **Reset states** appropriately (e.g., set to `.none` when appropriate)
+3. **Use CachedAsyncLoad** when you want to preserve data during refreshes or show stale data during errors
+4. **Use CachedAsyncAction** when you want to preserve previous results during action retries
+5. **Always handle all states** in your UI to provide good user experience
+6. **Use AsyncLoadView and CachedAsyncLoadView** for simple cases to reduce boilerplate code
+7. **Reset states** appropriately (e.g., set to `.none` when appropriate)
