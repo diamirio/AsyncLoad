@@ -52,8 +52,8 @@ public enum CachedAsyncAction<T>: Equatable {
             true
         case let (.loading(lhsItem), .loading(rhsItem)):
             lhsItem == rhsItem
-        case (.error, .error):
-            true
+        case let (.error(lhsItem, _), .error(rhsItem, _)):
+            lhsItem == rhsItem
         case let (.success(lhsItem), .success(rhsItem)):
             lhsItem == rhsItem
         default:
@@ -67,8 +67,8 @@ public enum CachedAsyncAction<T>: Equatable {
             false
         case let (.loading(lhsItem), .loading(rhsItem)):
             lhsItem != rhsItem
-        case (.error, .error):
-            false
+        case let (.error(lhsItem, _), .error(rhsItem, _)):
+            lhsItem != rhsItem
         case let (.success(lhsItem), .success(rhsItem)):
             lhsItem != rhsItem
         default:
