@@ -1,6 +1,6 @@
 import Foundation
 
-public enum AsyncLoad<T> : Equatable {
+public enum AsyncLoad<T>: Equatable {
     case none
     case loading
     case error(Error)

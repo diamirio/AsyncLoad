@@ -54,8 +54,8 @@ public enum AsyncAction<T>: Equatable {
             true
         case (.error, .error):
             true
-        case (.success, .success):
-            lhs.item == rhs.item
+        case let (.success(lhsItem), .success(rhsItem)):
+            lhsItem == rhsItem
         default:
             false
         }
