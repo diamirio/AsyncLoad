@@ -50,12 +50,27 @@ public enum CachedAsyncAction<T>: Equatable {
         switch (lhs, rhs) {
         case (.none, .none):
             true
-        case (.loading, .loading):
-            lhs.item == rhs.item
+        case let (.loading(lhsItem), .loading(rhsItem)):
+            lhsItem == rhsItem
         case (.error, .error):
             true
-        case (.success, .success):
-            lhs.item == rhs.item
+        case let (.success(lhsItem), .success(rhsItem)):
+            lhsItem == rhsItem
+        default:
+            false
+        }
+    }
+    
+    public static func != (lhs: CachedAsyncAction<T>, rhs: CachedAsyncAction<T>) -> Bool where T : Equatable {
+        switch (lhs, rhs) {
+        case (.none, .none):
+            false
+        case let (.loading(lhsItem), .loading(rhsItem)):
+            lhsItem != rhsItem
+        case (.error, .error):
+            false
+        case let (.success(lhsItem), .success(rhsItem)):
+            lhsItem != rhsItem
         default:
             false
         }
