@@ -1,6 +1,6 @@
 import Foundation
 
-public enum CachedAsyncAction<T>: Equatable {
+public enum CachedAsyncAction<T: Sendable>: Equatable, Sendable {
     case none
     case loading(T? = nil)
     case error(T? = nil, Error)

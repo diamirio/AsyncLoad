@@ -3,83 +3,46 @@ import Testing
 
 @Suite("Test equatable CachedAsyncAction")
 struct CachedAsyncActionEquatableItemTests {
-    @Test func testNone() async throws {
-        let action1: CachedAsyncAction<User> = .none
-        let action2: CachedAsyncAction<User> = .none
-
-        #expect(action1 == action2)
+    @Test<[CachedAsyncActionParameter<String>]>("Should be equal <String>", arguments: [
+        .init(.none, .none),
+        .init(.loading(), .loading()),
+        .init(.success("some"), .success("some")),
+        .init(.loading("some"), .loading("some")),
+        .init(.error("some", TestingError.some), .error("some", TestingError.some)),
+    ])
+    func equalString(param: CachedAsyncActionParameter<String>) async throws {
+        #expect(param.action1 == param.action2)
     }
 
-    @Test func testLoadedString() async throws {
-        var action1: CachedAsyncAction<String> = .success("Some")
-        var action2: CachedAsyncAction<String> = .success("Some")
-
-        #expect(action1 == action2)
-
-        action1 = .success("Other")
-        action2 = .success("Other1")
-
-        #expect(action1 != action2)
+    @Test<[CachedAsyncActionParameter<String>]>("Should not be equal <String>", arguments: [
+        .init(.success("Other"), .success("Other1")),
+        .init(.loading("some"), .loading("other")),
+        .init(.error(nil, TestingError.some), .error("some", TestingError.some)),
+        .init(.error(nil, TestingError.some), .error("some", TestingError.other)),
+        .init(.error("some", TestingError.some), .error(nil, TestingError.some)),
+    ])
+    func nonEqualString(param: CachedAsyncActionParameter<String>) async throws {
+        #expect(param.action1 != param.action2)
     }
 
-    @Test func testLoadedUser() async throws {
-        var action1: CachedAsyncAction<User> = .success(User(name: "Some"))
-        var action2: CachedAsyncAction<User> = .success(User(name: "Some"))
-
-        #expect(action1 == action2)
-
-        action1 = .success(User(name: "Alex"))
-        action2 = .success(User(name: "Daniel"))
-
-        #expect(action1 != action2)
+    @Test<[CachedAsyncActionParameter<User>]>("Should be equal <User>", arguments: [
+        .init(.none, .none),
+        .init(.loading(), .loading()),
+        .init(.success(User(name: "some")), .success(User(name: "some"))),
+        .init(.loading(User(name: "some")), .loading(User(name: "some"))),
+        .init(.error(User(name: "some"), TestingError.some), .error(User(name: "some"), TestingError.some)),
+    ])
+    func equalUser(param: CachedAsyncActionParameter<User>) async throws {
+        #expect(param.action1 == param.action2)
     }
 
-    @Test func testError() async throws {
-        var action1: CachedAsyncAction<String> = .error("some", TestingError.some)
-        var action2: CachedAsyncAction<String> = .error("some", TestingError.some)
-
-        #expect(action1 == action2)
-
-        action1 = .error(nil, TestingError.some)
-        action2 = .error("some", TestingError.some)
-
-        #expect(action1 != action2)
-
-        action1 = .error(nil, TestingError.some)
-        action2 = .error("some", TestingError.other)
-
-        #expect(action1 != action2)
-    }
-
-    @Test func testMultiple() async throws {
-        var action1: CachedAsyncAction<String> = .none
-        var action2: CachedAsyncAction<String> = .none
-
-        #expect(action1 == action2)
-
-        action1 = .loading()
-        action2 = .loading()
-
-        #expect(action1 == action2)
-
-        action1 = .success("some")
-        action2 = .success("some")
-
-        #expect(action1 == action2)
-
-        action1 = .loading("some")
-        action2 = .loading("other")
-
-        #expect(action1 != action2)
-
-        action1 = .loading()
-        action2 = .loading()
-
-        #expect(action1 == action2)
-
-        action1 = .error("some", TestingError.some)
-        action2 = .error(nil, TestingError.some)
-
-        #expect(action1 != action2)
+    @Test<[CachedAsyncActionParameter<User>]>("Should not be equal <User>", arguments: [
+        .init(.success(User(name: "Alex")), .success(User(name: "Daniel"))),
+        .init(.loading(User(name: "Alex")), .loading(User(name: "Daniel"))),
+        .init(.error(nil, TestingError.some), .error(User(name: "some"), TestingError.some)),
+        .init(.error(User(name: "Alex"), TestingError.some), .error(User(name: "Daniel"), TestingError.some)),
+    ])
+    func nonEqualUser(param: CachedAsyncActionParameter<User>) async throws {
+        #expect(param.action1 != param.action2)
     }
 }

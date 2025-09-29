@@ -2,7 +2,11 @@ import Foundation
 #if canImport(SwiftUI)
 import SwiftUI
 
-public struct AsyncLoadView<Item, Content: View, ErrorContent: View>: View {
+public struct AsyncLoadView<
+    Item: Sendable,
+    Content: View,
+    ErrorContent: View
+>: View {
     let state: AsyncLoad<Item>
 
     @ViewBuilder

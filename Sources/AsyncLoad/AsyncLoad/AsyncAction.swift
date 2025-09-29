@@ -1,6 +1,6 @@
 import Foundation
 
-public enum AsyncAction<T>: Equatable {
+public enum AsyncAction<T: Sendable>: Equatable, Sendable {
     case none
     case loading
     case error(Error)
@@ -64,15 +64,15 @@ public enum AsyncAction<T>: Equatable {
     public static func != (lhs: AsyncAction<T>, rhs: AsyncAction<T>) -> Bool where T : Equatable {
         switch (lhs, rhs) {
         case (.none, .none):
-            true
+            false
         case (.loading, .loading):
-            true
+            false
         case (.error, .error):
-            true
+            false
         case let (.success(lhsItem), .success(rhsItem)):
             lhsItem != rhsItem
         default:
-            false
+            true
         }
     }
 }

@@ -3,68 +3,24 @@ import Testing
 
 @Suite("Test non-equatable AsyncAction")
 struct AsyncActionNonEquatableItemTests {
-    @Test func testNone() async throws {
-        let action1: AsyncAction<NonEquatableItem> = .none
-        let action2: AsyncAction<NonEquatableItem> = .none
-
-        #expect(action1 == action2)
+    @Test<[AsyncActionParameter<NonEquatableItem>]>("Should be equal (structural)", arguments: [
+        .init(.none, .none),
+        .init(.loading, .loading),
+        .init(.success(NonEquatableItem(name: "Hello")), .success(NonEquatableItem(name: "Different"))),
+        .init(.success(NonEquatableItem(name: "Some")), .success(NonEquatableItem(name: "Other"))),
+        .init(.error(TestingError.some), .error(TestingError.some)),
+        .init(.error(TestingError.some), .error(TestingError.other)),
+    ])
+    func structuralEquality(param: AsyncActionParameter<NonEquatableItem>) async throws {
+        #expect(param.action1 == param.action2)
     }
 
-    @Test func testLoadedString() async throws {
-        var action1: AsyncAction<NonEquatableItem> = .success(NonEquatableItem(name: "Hello"))
-        var action2: AsyncAction<NonEquatableItem> = .success(NonEquatableItem(name: "Hello"))
-
-        #expect(action1 == action2)
-
-        action1 = .success(NonEquatableItem(name: "Some"))
-        action2 = .success(NonEquatableItem(name: "Other"))
-
-        #expect(action1 == action2)
-    }
-
-    @Test func testLoading() async throws {
-        let action1: AsyncAction<User> = .loading
-        let action2: AsyncAction<User> = .loading
-
-        #expect(action1 == action2)
-    }
-
-    @Test func testError() async throws {
-        var action1: AsyncAction<User> = .error(TestingError.some)
-        var action2: AsyncAction<User> = .error(TestingError.some)
-
-        #expect(action1 == action2)
-
-        action1 = .error(TestingError.some)
-        action2 = .error(TestingError.other)
-
-        #expect(action1 == action2)
-    }
-
-    @Test func testMultiple() async throws {
-        var action1: AsyncAction<NonEquatableItem> = .none
-        var action2: AsyncAction<NonEquatableItem> = .none
-
-        #expect(action1 == action2)
-
-        action1 = .loading
-        action2 = .loading
-
-        #expect(action1 == action2)
-
-        action1 = .success(NonEquatableItem(name: "Some"))
-        action2 = .success(NonEquatableItem(name: "Some"))
-
-        #expect(action1 == action2)
-
-        action1 = .success(NonEquatableItem(name: "Some"))
-        action2 = .success(NonEquatableItem(name: "Other"))
-
-        #expect(action1 == action2)
-
-        action1 = .error(TestingError.some)
-        action2 = .error(TestingError.some)
-
-        #expect(action1 == action2)
+    @Test<[AsyncActionParameter<User>]>("Should be equal (mixed types)", arguments: [
+        .init(.loading, .loading),
+        .init(.error(TestingError.some), .error(TestingError.some)),
+        .init(.error(TestingError.some), .error(TestingError.other)),
+    ])
+    func mixedTypeEquality(param: AsyncActionParameter<User>) async throws {
+        #expect(param.action1 == param.action2)
     }
 }

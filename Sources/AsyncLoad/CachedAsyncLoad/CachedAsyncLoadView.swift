@@ -3,7 +3,7 @@ import Foundation
 import SwiftUI
 
 public struct CachedAsyncLoadView<
-    Item,
+    Item: Sendable,
     Content: View,
     ErrorContent: View,
     LoadingContent: View
