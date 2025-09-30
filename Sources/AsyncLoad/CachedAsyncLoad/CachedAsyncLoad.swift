@@ -17,7 +17,11 @@ public enum CachedAsyncLoad<T: Sendable>: Equatable, Sendable {
         switch self {
         case let .loaded(item):
             item
-        default:
+        case let .error(item, _):
+            item
+        case let .loading(item):
+            item
+        case .none:
             nil
         }
     }

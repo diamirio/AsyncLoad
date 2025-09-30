@@ -69,6 +69,7 @@ fileprivate enum CustomError: Error {
             
             ProgressView()
                 .frame(maxWidth: .infinity)
+                .controlSize(.large)
         }
         .padding()
     } error: { item, error in
