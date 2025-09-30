@@ -28,7 +28,7 @@ Add AsyncLoad to your project by adding the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/diamirio/AsyncLoad", from: "1.0.0")
+    .package(url: "https://github.com/diamirio/AsyncLoad", from: "2.0.0")
 ]
 ```
 
