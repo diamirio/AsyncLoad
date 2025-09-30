@@ -137,7 +137,7 @@ public enum CachedAsyncLoad<T>: Equatable {
 #### Properties
 
 - `isLoading: Bool` - Returns true if the state is `.loading`
-- `item: T?` - Returns the loaded item if state is `.loaded`, nil otherwise
+- `item: T?` - Returns the item from `.loaded`, `.loading`, or `.error` states, nil for `.none`
 - `error: Error?` - Returns the error if state is `.error`, nil otherwise
 
 #### Example Usage
@@ -236,7 +236,7 @@ public init(
 
 // With default error content (Text)
 public init(
-    _ state: AsyncLoad<Item>, 
+    _ state: AsyncLoad<Item>,
     @ViewBuilder content: @escaping (Item?) -> Content
 ) where ErrorContent == Text
 ```
@@ -249,7 +249,7 @@ import AsyncLoad
 
 struct UserProfileView: View {
     @State private var viewModel = UserProfileViewModel()
-    
+
     var body: some View {
         AsyncLoadView(viewModel.userProfile) { user in
             if let user = user {
@@ -268,6 +268,80 @@ struct UserProfileView: View {
                     .foregroundColor(.red)
                 Text("Failed to load user: \(error.localizedDescription)")
                     .multilineTextAlignment(.center)
+            }
+        }
+        .task {
+            await viewModel.loadUserProfile(id: "123")
+        }
+    }
+}
+```
+
+### CachedAsyncLoadView
+
+A SwiftUI view component that handles cached async states with separate loading content.
+
+```swift
+public struct CachedAsyncLoadView<Item, Content: View, ErrorContent: View, LoadingContent: View>: View
+```
+
+#### Initializer
+
+```swift
+public init(
+    _ state: CachedAsyncLoad<Item>,
+    @ViewBuilder content: @escaping (Item) -> Content,
+    @ViewBuilder loading: @escaping (Item?) -> LoadingContent,
+    @ViewBuilder error: @escaping (Item?, Error) -> ErrorContent
+)
+```
+
+#### Example Usage
+
+```swift
+import SwiftUI
+import AsyncLoad
+
+struct CachedUserProfileView: View {
+    @State private var viewModel = CachedUserProfileViewModel()
+
+    var body: some View {
+        CachedAsyncLoadView(viewModel.userProfile) { user in
+            // Content view - only called when data is loaded
+            VStack(alignment: .leading) {
+                Text(user.name)
+                    .font(.title)
+                Text(user.email)
+                    .foregroundStyle(.secondary)
+            }
+        } loading: { cachedUser in
+            // Loading view - receives cached data if available
+            VStack {
+                if let cachedUser {
+                    VStack(alignment: .leading) {
+                        Text(cachedUser.name)
+                            .font(.title)
+                        Text(cachedUser.email)
+                            .foregroundStyle(.secondary)
+                    }
+                    .opacity(0.5)
+                }
+                ProgressView()
+            }
+        } error: { cachedUser, error in
+            // Error view - receives cached data if available
+            VStack {
+                if let cachedUser {
+                    VStack(alignment: .leading) {
+                        Text(cachedUser.name)
+                            .font(.title)
+                        Text(cachedUser.email)
+                            .foregroundStyle(.secondary)
+                    }
+                    .opacity(0.5)
+                }
+                Text("Error: \(error.localizedDescription)")
+                    .foregroundColor(.red)
             }
         }
         .task {
