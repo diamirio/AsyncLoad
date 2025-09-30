@@ -185,7 +185,7 @@ public enum CachedAsyncAction<T>: Equatable {
 #### Properties
 
 - `isLoading: Bool` - Returns true if the state is `.loading`
-- `item: T?` - Returns the success result if state is `.success`, nil otherwise
+- `item: T?` - Returns the item from `.success`, `.loading`, or `.error` states, nil for `.none`
 - `error: Error?` - Returns the error if state is `.error`, nil otherwise
 
 #### Example Usage
