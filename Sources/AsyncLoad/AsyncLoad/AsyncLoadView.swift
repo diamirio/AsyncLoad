@@ -25,8 +25,10 @@ public struct AsyncLoadView<
         errorContent = error
     }
 
-    public init(_ state: AsyncLoad<Item>, @ViewBuilder content: @escaping (Item?) -> Content)
-        where ErrorContent == Text {
+    public init(
+        _ state: AsyncLoad<Item>,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) where ErrorContent == Text {
         self.state = state
         self.content = content
 
@@ -46,6 +48,7 @@ public struct AsyncLoadView<
             case .loading, .none:
                 ProgressView()
                     .frame(maxHeight: .infinity)
+                    .controlSize(.large)
             case .loaded:
                 EmptyView()
             case let .error(error):
@@ -54,4 +57,16 @@ public struct AsyncLoadView<
         }
     }
 }
+
+@available(iOS 17.0, macOS 14.0, watchOS 10.0, *)
+#Preview {
+    @State
+    @Previewable
+    var state: AsyncLoad<String> = .loading
+    
+    AsyncLoadView(state) { test in
+        Text(test)
+    }
+}
+
 #endif
