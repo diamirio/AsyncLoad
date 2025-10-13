@@ -3,7 +3,7 @@ import Foundation
 import SwiftUI
 
 public struct CachedAsyncLoadView<
-    Item: Sendable,
+    Item: Equatable & Sendable,
     Content: View,
     ErrorContent: View,
     LoadingContent: View
@@ -32,22 +32,23 @@ public struct CachedAsyncLoadView<
     }
 
     public var body: some View {
-        switch state {
-        case .none:
-            loadingContent(nil)
-
-        case let .loading(item):
-            loadingContent(item)
-
-        case let .loaded(item):
-            content(item)
-
-        case let .error(item, error):
-            errorContent(item, error)
+        ZStack {
+            switch state {
+            case .none:
+                loadingContent(nil)
+                
+            case let .loading(item):
+                loadingContent(item)
+                
+            case let .loaded(item):
+                content(item)
+                
+            case let .error(item, error):
+                errorContent(item, error)
+            }
         }
     }
 }
-#endif
 
 fileprivate enum CustomError: Error {
     case test
@@ -93,6 +94,8 @@ fileprivate enum CustomError: Error {
                 try await Task.sleep(for: .seconds(2))
                 state = .loaded("Working!")
                 try await Task.sleep(for: .seconds(2))
+                state = .loaded("Working1234")
+                try await Task.sleep(for: .seconds(2))
                 state = .loading("Working!")
                 try await Task.sleep(for: .seconds(2))
                 state = .error("Working!", CustomError.test)
@@ -100,3 +103,4 @@ fileprivate enum CustomError: Error {
         }
     }
 }
+#endif

@@ -3,7 +3,7 @@ import Foundation
 import SwiftUI
 
 public struct AsyncLoadView<
-    Item: Sendable,
+    Item: Equatable & Sendable,
     Content: View,
     ErrorContent: View
 >: View {
