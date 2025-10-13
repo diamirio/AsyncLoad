@@ -5,14 +5,14 @@ public enum AsyncLoad<T: Equatable & Sendable>: Equatable, Sendable {
     case loading
     case error(Error)
     case loaded(T)
-
+    
     public var isLoading: Bool {
         if case .loading = self {
             return true
         }
         return false
     }
-
+    
     public var item: T? {
         switch self {
         case let .loaded(item):
@@ -21,7 +21,7 @@ public enum AsyncLoad<T: Equatable & Sendable>: Equatable, Sendable {
             nil
         }
     }
-
+    
     public var error: Error? {
         switch self {
         case let .error(error):
@@ -31,7 +31,7 @@ public enum AsyncLoad<T: Equatable & Sendable>: Equatable, Sendable {
         }
     }
     
-    public static func == (lhs: AsyncLoad<T>, rhs: AsyncLoad<T>) -> Bool {
+    public static func == (lhs: AsyncLoad<T>, rhs: AsyncLoad<T>) -> Bool where T : Equatable {
         switch (lhs, rhs) {
         case (.none, .none):
             true
@@ -39,8 +39,8 @@ public enum AsyncLoad<T: Equatable & Sendable>: Equatable, Sendable {
             true
         case (.error, .error):
             true
-        case (.loaded, .loaded):
-            true
+        case let (.loaded(lhsItem), .loaded(rhsItem)):
+            lhsItem == rhsItem
         default:
             false
         }
