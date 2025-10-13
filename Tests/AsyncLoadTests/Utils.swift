@@ -18,7 +18,7 @@ struct User: Equatable {
     let name: String
 }
 
-struct AsyncActionParameter<T: Sendable> {
+struct AsyncActionParameter<T: Equatable & Sendable> {
     let action1: AsyncAction<T>
     let action2: AsyncAction<T>
     
@@ -28,7 +28,7 @@ struct AsyncActionParameter<T: Sendable> {
     }
 }
 
-struct AsyncLoadParameter<T: Sendable> {
+struct AsyncLoadParameter<T: Equatable & Sendable> {
     let load1: AsyncLoad<T>
     let load2: AsyncLoad<T>
 
@@ -38,7 +38,7 @@ struct AsyncLoadParameter<T: Sendable> {
     }
 }
 
-struct CachedAsyncActionParameter<T: Sendable> {
+struct CachedAsyncActionParameter<T: Equatable & Sendable> {
     let action1: CachedAsyncAction<T>
     let action2: CachedAsyncAction<T>
 
@@ -48,7 +48,7 @@ struct CachedAsyncActionParameter<T: Sendable> {
     }
 }
 
-struct CachedAsyncLoadParameter<T: Sendable> {
+struct CachedAsyncLoadParameter<T: Equatable & Sendable> {
     let load1: CachedAsyncLoad<T>
     let load2: CachedAsyncLoad<T>
     

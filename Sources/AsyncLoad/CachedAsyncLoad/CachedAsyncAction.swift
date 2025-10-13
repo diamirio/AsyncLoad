@@ -1,6 +1,6 @@
 import Foundation
 
-public enum CachedAsyncAction<T: Sendable>: Equatable, Sendable {
+public enum CachedAsyncAction<T: Equatable & Sendable>: Equatable, Sendable {
     case none
     case loading(T? = nil)
     case error(T? = nil, Error)
@@ -35,42 +35,12 @@ public enum CachedAsyncAction<T: Sendable>: Equatable, Sendable {
         switch (lhs, rhs) {
         case (.none, .none):
             true
-        case (.loading, .loading):
-            true
-        case (.error, .error):
-            true
-        case (.success, .success):
-            true
-        default:
-            false
-        }
-    }
-    
-    public static func == (lhs: CachedAsyncAction<T>, rhs: CachedAsyncAction<T>) -> Bool where T : Equatable {
-        switch (lhs, rhs) {
-        case (.none, .none):
-            true
         case let (.loading(lhsItem), .loading(rhsItem)):
             lhsItem == rhsItem
         case let (.error(lhsItem, _), .error(rhsItem, _)):
             lhsItem == rhsItem
         case let (.success(lhsItem), .success(rhsItem)):
             lhsItem == rhsItem
-        default:
-            false
-        }
-    }
-    
-    public static func != (lhs: CachedAsyncAction<T>, rhs: CachedAsyncAction<T>) -> Bool where T : Equatable {
-        switch (lhs, rhs) {
-        case (.none, .none):
-            false
-        case let (.loading(lhsItem), .loading(rhsItem)):
-            lhsItem != rhsItem
-        case let (.error(lhsItem, _), .error(rhsItem, _)):
-            lhsItem != rhsItem
-        case let (.success(lhsItem), .success(rhsItem)):
-            lhsItem != rhsItem
         default:
             false
         }

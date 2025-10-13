@@ -3,7 +3,7 @@ import Foundation
 import SwiftUI
 
 public struct CachedAsyncLoadView<
-    Item: Sendable,
+    Item: Equatable & Sendable,
     Content: View,
     ErrorContent: View,
     LoadingContent: View
@@ -47,7 +47,6 @@ public struct CachedAsyncLoadView<
         }
     }
 }
-#endif
 
 fileprivate enum CustomError: Error {
     case test
@@ -93,6 +92,8 @@ fileprivate enum CustomError: Error {
                 try await Task.sleep(for: .seconds(2))
                 state = .loaded("Working!")
                 try await Task.sleep(for: .seconds(2))
+                state = .loaded("Working1234")
+                try await Task.sleep(for: .seconds(2))
                 state = .loading("Working!")
                 try await Task.sleep(for: .seconds(2))
                 state = .error("Working!", CustomError.test)
@@ -100,3 +101,4 @@ fileprivate enum CustomError: Error {
         }
     }
 }
+#endif
