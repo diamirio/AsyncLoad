@@ -32,18 +32,20 @@ public struct CachedAsyncLoadView<
     }
 
     public var body: some View {
-        switch state {
-        case .none:
-            loadingContent(nil)
-
-        case let .loading(item):
-            loadingContent(item)
-
-        case let .loaded(item):
-            content(item)
-
-        case let .error(item, error):
-            errorContent(item, error)
+        ZStack {
+            switch state {
+            case .none:
+                loadingContent(nil)
+                
+            case let .loading(item):
+                loadingContent(item)
+                
+            case let .loaded(item):
+                content(item)
+                
+            case let .error(item, error):
+                errorContent(item, error)
+            }
         }
     }
 }
