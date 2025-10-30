@@ -6,6 +6,7 @@ A Swift package that provides elegant state management for asynchronous operatio
 
 AsyncLoad provides components for handling asynchronous operations:
 - `AsyncLoad<T>`: For loading data operations
+- `AsyncLoad` (without type): For operations that track loading state without data (uses `NoContent`)
 - `CachedAsyncLoad<T>`: For loading operations that preserve cached data during refreshes
 - `AsyncLoadView`: A SwiftUI view component for displaying async states
 - `CachedAsyncLoadView`: A SwiftUI view component for cached async states
@@ -78,6 +79,49 @@ class DataViewModel {
         }
     }
 }
+```
+
+### AsyncLoad without Type Parameter (NoContent)
+
+For operations that need to track loading state but don't have any data to return, you can use `AsyncLoad` without a type parameter. This uses the `NoContent` type internally.
+
+```swift
+public struct NoContent: Equatable, Sendable
+public typealias AsyncLoadNoContent = AsyncLoad<NoContent>
+```
+
+This is useful for operations like:
+- Delete operations
+- Simple actions (e.g., mark as read, archive)
+- Refresh operations without data
+- Any operation where you only care about success/failure/loading state
+
+#### Example Usage
+
+```swift
+import AsyncLoad
+
+@Observable
+class ActionViewModel {
+    var deleteStatus: AsyncLoad = .none  // No type parameter needed
+
+    func deleteItem(id: String) async {
+        deleteStatus = .loading
+
+        do {
+            try await itemService.deleteItem(id: id)
+            deleteStatus = .loaded  // Convenience property for NoContent
+        } catch {
+            deleteStatus = .error(error)
+        }
+    }
+}
+```
+
+You can also use the type alias explicitly:
+
+```swift
+var deleteStatus: AsyncLoadNoContent = .none
 ```
 
 ### CachedAsyncLoad<T>
