@@ -28,8 +28,6 @@ struct AsyncLoadParameter<T: Equatable & Sendable> {
     }
 }
 
-let t = AsyncLoadNoContentParameter(.none, .none)
-
 struct AsyncLoadNoContentParameter {
     let load1: AsyncLoadNoContent
     let load2: AsyncLoadNoContent

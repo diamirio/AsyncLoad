@@ -31,6 +31,4 @@ struct AsyncLoadNoContentTests {
     func noContentNotEqual(_ parameter: AsyncLoadNoContentParameter) {
         #expect(parameter.load1 != parameter.load2)
     }
-    
-    
 }
