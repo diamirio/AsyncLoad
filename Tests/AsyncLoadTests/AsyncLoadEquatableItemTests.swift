@@ -40,4 +40,6 @@ struct AsyncLoadEquatableItemTests {
     func nonEqualUser(param: AsyncLoadParameter<User>) async throws {
         #expect(param.load1 != param.load2)
     }
+    
+    
 }

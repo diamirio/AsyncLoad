@@ -28,6 +28,16 @@ struct AsyncLoadParameter<T: Equatable & Sendable> {
     }
 }
 
+struct AsyncLoadNoContentParameter {
+    let load1: AsyncLoadNoContent
+    let load2: AsyncLoadNoContent
+    
+    init(_ load1: AsyncLoadNoContent, _ load2: AsyncLoadNoContent) {
+        self.load1 = load1
+        self.load2 = load2
+    }
+}
+
 struct CachedAsyncLoadParameter<T: Equatable & Sendable> {
     let load1: CachedAsyncLoad<T>
     let load2: CachedAsyncLoad<T>
