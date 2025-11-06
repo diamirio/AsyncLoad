@@ -103,7 +103,9 @@ import AsyncLoad
 
 @Observable
 class ActionViewModel {
-    var deleteStatus: AsyncLoad = .none  // No type parameter needed
+    var deleteStatus: AsyncLoadNoContent = .none  // No type parameter needed
+    // alterantive declaration
+    // var deleteStatus = AsyncLoad(.none)
 
     func deleteItem(id: String) async {
         deleteStatus = .loading
