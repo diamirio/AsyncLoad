@@ -14,7 +14,6 @@ struct AsyncLoadNoContentTests {
     @Test<[AsyncLoadNoContentParameter]>("Should be equal", arguments: [
         .init(.none, .none),
         .init(.loading, .loading),
-        .init(.loaded, .loaded),
         .init(.error(TestingError.some), .error(TestingError.some)),
     ])
     func noContentEqual(_ parameter: AsyncLoadNoContentParameter) {
@@ -26,6 +25,7 @@ struct AsyncLoadNoContentTests {
         .init(.none, .loading),
         .init(.loading, .loaded),
         .init(.loaded, .error(TestingError.some)),
+        .init(.loaded, .loaded),
         .init(.error(TestingError.some), .none),
     ])
     func noContentNotEqual(_ parameter: AsyncLoadNoContentParameter) {
