@@ -3,6 +3,8 @@ import Foundation
 public typealias AsyncLoadNoContent = AsyncLoad<NoContent>
 
 public struct NoContent: Equatable, Sendable {
+    public let uuid = UUID()
+    
     public init() { }
 }
 
