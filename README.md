@@ -309,6 +309,10 @@ struct CachedUserProfileView: View {
 }
 ```
 
+## AI Agent Skill
+
+The repo ships an agent skill that explains how to use AsyncLoad (choosing between `AsyncLoad` and `CachedAsyncLoad`, the views, patterns and pitfalls): [`.agents/skills/asyncload`](.agents/skills/asyncload/SKILL.md). Link or copy it into your project's skills directory to let coding agents handle async state consistently.
+
 ## Features
 
 - **Type-safe**: Generic enums ensure type safety for your data
