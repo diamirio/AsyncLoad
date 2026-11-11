@@ -14,6 +14,11 @@ final class NonEquatableItem: Sendable {
     }
 }
 
+/// Compares through the Equatable conformance, like @Observable and SwiftUI do.
+func isEqual<E: Equatable>(_ lhs: E, _ rhs: E) -> Bool {
+    lhs == rhs
+}
+
 struct User: Equatable {
     let name: String
 }

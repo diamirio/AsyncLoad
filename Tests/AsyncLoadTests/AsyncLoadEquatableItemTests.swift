@@ -40,6 +40,20 @@ struct AsyncLoadEquatableItemTests {
     func nonEqualUser(param: AsyncLoadParameter<User>) async throws {
         #expect(param.load1 != param.load2)
     }
-    
-    
+
+    @Test<[AsyncLoadParameter<String>]>("Should not be equal via Equatable <String>", arguments: [
+        .init(.loaded("Some"), .loaded("Other")),
+        .init(.error(TestingError.some), .loaded("some")),
+    ])
+    func nonEqualStringViaEquatable(param: AsyncLoadParameter<String>) async throws {
+        #expect(!isEqual(param.load1, param.load2))
+    }
+
+    @Test<[AsyncLoadParameter<User>]>("Should not be equal via Equatable <User>", arguments: [
+        .init(.loaded(User(name: "Alex")), .loaded(User(name: "Daniel"))),
+        .init(.error(TestingError.some), .loaded(User(name: "some"))),
+    ])
+    func nonEqualUserViaEquatable(param: AsyncLoadParameter<User>) async throws {
+        #expect(!isEqual(param.load1, param.load2))
+    }
 }
