@@ -5,9 +5,9 @@ description: Model async request state with diamirio/AsyncLoad — AsyncLoad<T> 
 
 # AsyncLoad
 
-One enum per request instead of separate `isLoading` / `error` / `data` properties. Package `diamirio/AsyncLoad`, product and module `AsyncLoad` (includes the SwiftUI views). Requires Swift 6.1+, iOS 16 / macOS 13 / watchOS 9 / visionOS 1. It has no dependencies and is independent of AsyncReactor, though they are designed to work together (companion skill: `asyncreactor`).
+One enum per request instead of separate `isLoading` / `error` / `data` properties. Package `diamirio/AsyncLoad`, product and module `AsyncLoad` (includes the SwiftUI views). Requires Swift 6.1+, iOS 16 / macOS 13 / watchOS 9 / visionOS 1. It has no dependencies and works with any architecture (plain `@Observable` view models, reactors, …). For using it inside an AsyncReactor reactor, see the `asyncreactor` skill if it is available.
 
-Source of truth: `Sources/AsyncLoad`. The README has some inaccuracies (see "Pitfalls") — trust the sources.
+Source of truth: `Sources/AsyncLoad` — read it when unsure.
 
 ## Types
 
@@ -33,7 +33,7 @@ do {
 ```
 
 - Set `.loading` before the async work, `.loaded` / `.error` after.
-- With cancellation (new request replaces old one) do not publish `.error` for `CancellationError`; just return.
+- With cancellation (new request replaces old one) do not publish `.error` for cancelled work; just return. `URLSession` throws `URLError(.cancelled)` rather than `CancellationError`, so handle both or check `Task.isCancelled` before writing state.
 - `AsyncLoadNoContent`: `state.delete = .loading` … `state.delete = .loaded` (static `.loaded` convenience, no payload).
 
 Cached pattern:
@@ -69,10 +69,7 @@ do {
 - Reset to `.none` when the context changes (different id, logout) so stale data is not shown for the wrong subject.
 - Do not assume app-level helpers such as `isNone`, `isError` or a `retry:` overload exist in the package — they are not part of it. Add them in the app if wanted.
 
-## Pitfalls
+- For the no-content case write the explicit type `AsyncLoadNoContent`.
+- `AsyncLoad` is `Sendable`; the views are SwiftUI-only (`#if canImport(SwiftUI)`).
 
-- README shows `AsyncLoadView` content as `(Item?)`; the real signature is `(Item)`.
-- README shows `var x: AsyncLoad = .none` for the no-content type; prefer the explicit `AsyncLoadNoContent`.
-- `AsyncLoad` is `Sendable` and the views are SwiftUI-only (`#if canImport(SwiftUI)`).
-
-See `references/patterns.md` for reactor integration and testing.
+See `references/patterns.md` for a view model example, composite screens and testing.

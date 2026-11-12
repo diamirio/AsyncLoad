@@ -6,7 +6,7 @@ A Swift package that provides elegant state management for asynchronous operatio
 
 AsyncLoad provides components for handling asynchronous operations:
 - `AsyncLoad<T>`: For loading data operations
-- `AsyncLoad` (without type): For operations that track loading state without data (uses `NoContent`)
+- `AsyncLoadNoContent`: For operations that track loading state without data (`AsyncLoad<NoContent>`)
 - `CachedAsyncLoad<T>`: For loading operations that preserve cached data during refreshes
 - `AsyncLoadView`: A SwiftUI view component for displaying async states
 - `CachedAsyncLoadView`: A SwiftUI view component for cached async states
@@ -81,9 +81,9 @@ class DataViewModel {
 }
 ```
 
-### AsyncLoad without Type Parameter (NoContent)
+### AsyncLoadNoContent
 
-For operations that need to track loading state but don't have any data to return, you can use `AsyncLoad` without a type parameter. This uses the `NoContent` type internally.
+For operations that need to track loading state but don't have any data to return, use `AsyncLoadNoContent`, a type alias for `AsyncLoad<NoContent>`.
 
 ```swift
 public struct NoContent: Equatable, Sendable
@@ -103,7 +103,7 @@ import AsyncLoad
 
 @Observable
 class ActionViewModel {
-    var deleteStatus: AsyncLoad = .none  // No type parameter needed
+    var deleteStatus: AsyncLoadNoContent = .none
 
     func deleteItem(id: String) async {
         deleteStatus = .loading
@@ -116,12 +116,6 @@ class ActionViewModel {
         }
     }
 }
-```
-
-You can also use the type alias explicitly:
-
-```swift
-var deleteStatus: AsyncLoadNoContent = .none
 ```
 
 ### CachedAsyncLoad<T>
@@ -188,14 +182,14 @@ public struct AsyncLoadView<Item, Content: View, ErrorContent: View>: View
 // With custom error content
 public init(
     _ state: AsyncLoad<Item>,
-    @ViewBuilder content: @escaping (Item?) -> Content,
+    @ViewBuilder content: @escaping (Item) -> Content,
     @ViewBuilder error: @escaping (Error) -> ErrorContent
 )
 
 // With default error content (Text)
 public init(
     _ state: AsyncLoad<Item>,
-    @ViewBuilder content: @escaping (Item?) -> Content
+    @ViewBuilder content: @escaping (Item) -> Content
 ) where ErrorContent == Text
 ```
 
@@ -210,15 +204,11 @@ struct UserProfileView: View {
 
     var body: some View {
         AsyncLoadView(viewModel.userProfile) { user in
-            if let user = user {
-                VStack(alignment: .leading) {
-                    Text(user.name)
-                        .font(.title)
-                    Text(user.email)
-                        .foregroundStyle(.secondary)
-                }
-            } else {
-                Text("No user data")
+            VStack(alignment: .leading) {
+                Text(user.name)
+                    .font(.title)
+                Text(user.email)
+                    .foregroundStyle(.secondary)
             }
         } error: { error in
             VStack {
