@@ -69,16 +69,50 @@ For a screen with several requests, keep one `AsyncLoad` per request and combine
 
 ## Testing
 
-```swift
-@Test func loadedExposesItem() {
-    let state = AsyncLoad<User>.loaded(User(name: "Ann"))
-    #expect(state.item == User(name: "Ann"))
-    #expect(state.error == nil)
-}
+Test the view model (or reactor) that produces the states, with Swift Testing and a stubbed service. Do not test `AsyncLoad` itself.
 
-@Test func errorsCompareEqual() {
-    #expect(AsyncLoad<User>.error(TestingError.some) == .error(TestingError.other))
+**Pitfall: `==` ignores the error.** `AsyncLoad.error(a) == .error(b)` is always `true`, and `CachedAsyncLoad.error(item, a) == .error(item, b)` compares only the cached item. Never assert an error state with `== .error(x)`; check the error itself:
+
+```swift
+import AsyncLoad
+import Foundation
+import Testing
+@testable import MyApp
+
+@MainActor
+struct ProfileViewModelTests {
+    let service = ProfileServiceStub()
+
+    @Test("Failed refresh keeps the cached profile and stores the error")
+    func refreshFailureKeepsCachedProfile() async {
+        // Given
+        service.profileResult = .success(.fixture(name: "Ann"))
+        let sut = ProfileViewModel(service: service)
+        await sut.load()
+        service.profileResult = .failure(URLError(.notConnectedToInternet))
+
+        // When
+        await sut.load()
+
+        // Then
+        #expect(sut.profile.item == .fixture(name: "Ann"))
+        #expect((sut.profile.error as? URLError)?.code == .notConnectedToInternet)
+    }
+
+    @Test("Delete without content ends in loaded")
+    func deleteSuccess() async {
+        // Given
+        let sut = ProfileViewModel(service: service)
+
+        // When
+        await sut.deleteProfile()
+
+        // Then
+        #expect(sut.delete == .loaded)
+    }
 }
 ```
 
-Test the view model (or reactor) that produces the states: assert `.loading` is set before the call and `.loaded`/`.error` after, using a mock service.
+- `.loaded` / `.loading` / `.none` compare by value and can be asserted with `==`. For `.error`, use `.error` (the `Error?` property) and check its type or code.
+- Intermediate `.loading` state: keep the stub's request pending, assert `isLoading`, then let it finish. See the `asyncreactor` skill's testing reference for a pending stub.
+- `CancellationError` must leave the state unchanged; cover it when the code has a `catch is CancellationError` branch.

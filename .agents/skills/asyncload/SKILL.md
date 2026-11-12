@@ -1,6 +1,6 @@
 ---
 name: asyncload
-description: Model async request state with diamirio/AsyncLoad — AsyncLoad<T> (.none/.loading/.loaded/.error), AsyncLoadNoContent for operations without data, CachedAsyncLoad<T> for refreshes that keep stale data, and the SwiftUI views AsyncLoadView and CachedAsyncLoadView. Use when a project imports AsyncLoad, when writing or reviewing loading/error state in a reactor or view model, when choosing between AsyncLoad and CachedAsyncLoad, when rendering loading and error states, or when replacing isLoading/error/data flags.
+description: Model async request state with diamirio/AsyncLoad — AsyncLoad<T> (.none/.loading/.loaded/.error), AsyncLoadNoContent for operations without data, CachedAsyncLoad<T> for refreshes that keep stale data, and the SwiftUI views AsyncLoadView and CachedAsyncLoadView. Use when a project imports AsyncLoad, when writing or reviewing loading/error state in a reactor or view model, when choosing between AsyncLoad and CachedAsyncLoad, when rendering loading and error states, when replacing isLoading/error/data flags, or when testing code that holds AsyncLoad state.
 ---
 
 # AsyncLoad
@@ -72,4 +72,4 @@ do {
 - For the no-content case write the explicit type `AsyncLoadNoContent`.
 - `AsyncLoad` is `Sendable`; the views are SwiftUI-only (`#if canImport(SwiftUI)`).
 
-See `references/patterns.md` for a view model example, composite screens and testing.
+See `references/patterns.md` for a view model example, composite screens and testing (incl. the error-equality pitfall).
